@@ -1,9 +1,50 @@
 import React from "react";
+import { Carousel } from "antd";
+import classNames from 'classnames';
+
+import {useNavigate, useLocation} from "react-router-dom";
+
 
 
 const Navbar: React.FC = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const nav_menu = [
+        {
+            title: "首页",
+            name: ''
+        },
+        {
+            title: "目的地",
+            name: 'destination'
+        },
+        {
+            title: '订酒店',
+            name: 'hotel'
+        },
+        {
+            title: '攻略分享',
+            name: 'strategy'
+        },
+        {
+            title: '周边商城',
+            name: 'shopping'
+        }
+    ]
+    const swiper_img = [
+        '/swiper/pexels-fr3nks-356808.jpg',
+        '/swiper/pexels-freestockpro-2166553.jpg',
+        '/swiper/pexels-jimmy-teoh-294331-1010657.jpg',
+        '/swiper/pexels-tobiasbjorkli-2104152.jpg'
+    ]
+
+    const routeJump = (name: string) => {
+      navigate(`/${name}`);
+    }
     return (
         <header className="w-full bg-white shadow-sm">
+            {/* 顶部导航栏 */}
             <nav className="container mx-auto flex items-center justify-between px-6 py-4">
                 {/* 左侧 Logo + 网站名称 */}
                 <div className="flex items-center space-x-3">
@@ -19,21 +60,21 @@ const Navbar: React.FC = () => {
 
                 {/* 中间导航部分 */}
                 <ul className="hidden md:flex space-x-8 text-gray-700 font-medium">
-                    <li className="hover:text-cyan-400 cursor-pointer transition-colors">
-                        首页
-                    </li>
-                    <li className="hover:text-cyan-400 cursor-pointer transition-colors">
-                        目的地
-                    </li>
-                    <li className="hover:text-cyan-400 cursor-pointer transition-colors">
-                        路线推荐
-                    </li>
-                    <li className="hover:text-cyan-400 cursor-pointer transition-colors">
-                        攻略分享
-                    </li>
-                    <li className="hover:text-cyan-400 cursor-pointer transition-colors">
-                        联系我们
-                    </li>
+                    {nav_menu.map((item, index) => {
+                        const isActive = location.pathname === `/${item.name}` || (item.name === "home" && location.pathname === "/");
+
+                        return (
+                        <li className={`hover:text-cyan-400 cursor-pointer transition-colors ${
+                            isActive ? "text-cyan-400 border-b-3 border-cyan-400 pb-2" : ""
+                        }`}
+                            key={index}
+                            onClick={() => {
+                                routeJump(item.name);
+                            }}
+                        >
+                            {item.title}
+                        </li>
+                    )})}
                 </ul>
 
                 {/* 右侧用户信息/登录注册 */}
@@ -60,44 +101,15 @@ const Navbar: React.FC = () => {
                     </div>}
                 </div>
             </nav>
-            <div className="carousel w-full h-[450px]">
-                <div id="slide1" className="carousel-item relative w-full">
-                    <img
-                        src="https://img.daisyui.com/images/stock/photo-1625726411847-8cbb60cc71e6.webp"
-                        className="w-full" />
-                    <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-                        <a href="#slide4" className="btn btn-circle">❮</a>
-                        <a href="#slide2" className="btn btn-circle">❯</a>
-                    </div>
-                </div>
-                <div id="slide2" className="carousel-item relative w-full">
-                    <img
-                        src="https://img.daisyui.com/images/stock/photo-1609621838510-5ad474b7d25d.webp"
-                        className="w-full" />
-                    <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-                        <a href="#slide1" className="btn btn-circle">❮</a>
-                        <a href="#slide3" className="btn btn-circle">❯</a>
-                    </div>
-                </div>
-                <div id="slide3" className="carousel-item relative w-full">
-                    <img
-                        src="https://img.daisyui.com/images/stock/photo-1414694762283-acccc27bca85.webp"
-                        className="w-full" />
-                    <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-                        <a href="#slide2" className="btn btn-circle">❮</a>
-                        <a href="#slide4" className="btn btn-circle">❯</a>
-                    </div>
-                </div>
-                <div id="slide4" className="carousel-item relative w-full">
-                    <img
-                        src="https://img.daisyui.com/images/stock/photo-1665553365602-b2fb8e5d1707.webp"
-                        className="w-full" />
-                    <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-                        <a href="#slide3" className="btn btn-circle">❮</a>
-                        <a href="#slide1" className="btn btn-circle">❯</a>
-                    </div>
-                </div>
-            </div>
+
+            {/* 轮播图 */}
+            <Carousel autoplay autoplaySpeed={2500}>
+                {swiper_img.map((item, index) => {
+                    return (
+                        <img src={item} alt="" className={classNames('object-cover', 'w-full', 'h-[500px]')} key={index} />
+                    )
+                })}
+            </Carousel>
         </header>
     );
 };
