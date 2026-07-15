@@ -17,7 +17,7 @@ const SearchBox: React.FC = () => {
       label: '旅行笔记'
   }]
   return (
-      <div className="w-full max-w-xl mx-auto">
+      <div className="w-full max-w-xl mx-auto mt-6">
           <div
               className="flex items-center bg-white/90 backdrop-blur-md border border-gray-200 rounded-2xl shadow-lg
            hover:shadow-xl transition-all duration-300 px-4 py-1"
