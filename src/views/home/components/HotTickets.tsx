@@ -1,6 +1,7 @@
 import React from "react";
 import { List, Card, Row, Col, Typography, Tag } from "antd";
 import { ArrowRightOutlined, ClockCircleOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 const { Text } = Typography;
 
@@ -35,9 +36,11 @@ const FlightTicketItem: React.FC<TicketProps> = ({
   image,
   direct,
 }) => {
+  const navigate = useNavigate();
   return (
     <Card
       hoverable
+      onClick={() => navigate(`/flight?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`)}
       className="rounded-xl border-0 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden"
       bodyStyle={{ padding: 0 }}
     >

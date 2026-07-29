@@ -25,6 +25,7 @@ import {
 import classNames from "classnames";
 import { mockHotels } from "./data";
 import type { Hotel } from "./data";
+import BookingModal from "../../components/hotel/BookingModal.tsx";
 
 const { RangePicker } = DatePicker;
 
@@ -53,6 +54,7 @@ const HotelDetail: React.FC = () => {
 
   const [guests, setGuests] = useState(2);
   const [rooms, setRooms] = useState(1);
+  const [bookingOpen, setBookingOpen] = useState(false);
 
   if (!hotel) {
     return (
@@ -167,7 +169,7 @@ const HotelDetail: React.FC = () => {
                           <p className="text-gray-300 text-xs line-through">¥{room.originalPrice}</p>
                         )}
                       </div>
-                      <Button type="primary" className="!rounded-full !bg-gradient-to-r !from-blue-500 !to-indigo-500 !border-0">
+                      <Button type="primary" onClick={() => setBookingOpen(true)} className="!rounded-full !bg-gradient-to-r !from-blue-500 !to-indigo-500 !border-0">
                         预订
                       </Button>
                     </div>
@@ -233,6 +235,7 @@ const HotelDetail: React.FC = () => {
                     </div>
                   </div>
                   <Button type="primary" size="large" block
+                    onClick={() => setBookingOpen(true)}
                     className="!rounded-xl !h-12 !text-base !font-semibold !bg-gradient-to-r !from-blue-500 !to-indigo-500 !border-0 !shadow-lg hover:!shadow-xl">
                     <SearchOutlined /> 查看可订房型
                   </Button>
@@ -255,6 +258,15 @@ const HotelDetail: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* 预订弹窗 */}
+      {hotel && (
+        <BookingModal
+          open={bookingOpen}
+          hotel={hotel}
+          onClose={() => setBookingOpen(false)}
+        />
+      )}
     </div>
   );
 };

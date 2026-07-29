@@ -1,55 +1,65 @@
 import React from "react";
-import {Popover} from "antd";
+import {Popover, message} from "antd";
 import classNames from 'classnames';
-import {useSelector} from "react-redux";
+import {useSelector, useDispatch} from "react-redux";
 import {useNavigate, useLocation} from "react-router-dom";
-import type {RootState} from "../../store";
+import type {RootState, RootDispatch} from "../../store";
+import {logout} from "../../store/reducers/user";
+import type {UserRole} from "../../store/reducers/user";
 
 
-const profileOptions: string[] = ['个人中心', '退出登陆', '设置']
-
-const content = (
-    <div>
-        {profileOptions.map((item: string, index: number) => {
-            console.log(index);
-            return (
-                <div className={'w-full h-10 text-xl cursor-pointer hover:bg-gray-300'}>{item}</div>
-            )
-        })}
-    </div>
-);
 const Navbar: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const {username, token} = useSelector((state: RootState) => state.user);
-    const nav_menu = [
-        {
-            title: "首页",
-            name: ''
-        },
-        {
-            title: "目的地",
-            name: 'destination'
-        },
-        {
-            title: '订酒店',
-            name: 'hotel'
-        },
-        {
-            title: '攻略分享',
-            name: 'strategy'
-        },
-        {
-            title: '周边商城',
-            name: 'shopping'
-        }
-    ]
+    const dispatch = useDispatch<RootDispatch>();
+    const user = useSelector((state: RootState) => state.user);
+    const {username, token, role, avatar} = user;
 
+    const nav_menu = [
+        { title: "首页", name: '' },
+        { title: "目的地", name: 'destination' },
+        { title: '订机票', name: 'flight' },
+        { title: '订酒店', name: 'hotel' },
+        { title: '攻略分享', name: 'strategy' },
+    ];
 
     const routeJump = (name: string) => {
       navigate(`/${name}`);
-    }
+    };
 
+    const handleLogout = () => {
+        dispatch(logout());
+        message.success("已退出登录");
+        navigate("/");
+    };
+
+    const popoverContent = (
+        <div className="w-36 py-1">
+            <div
+                onClick={() => { routeJump("user/profile"); }}
+                className="px-3 py-2 text-sm text-gray-700 cursor-pointer hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
+            >
+                👤 个人中心
+            </div>
+            {role === "creator" && (
+                <div
+                    onClick={() => { routeJump("user/creator"); }}
+                    className="px-3 py-2 text-sm text-gray-700 cursor-pointer hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors"
+                >
+                    ✍️ 创作中心
+                </div>
+            )}
+            <div className="border-t border-gray-100 my-1" />
+            <div
+                onClick={handleLogout}
+                className="px-3 py-2 text-sm text-red-500 cursor-pointer hover:bg-red-50 rounded-lg transition-colors"
+            >
+                🚪 退出登录
+            </div>
+        </div>
+    );
+
+    const roleTag: Record<UserRole, string> = { user: "旅行者", creator: "创作者" };
 
     return (
         <header className="w-full bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-50">
@@ -57,11 +67,9 @@ const Navbar: React.FC = () => {
             <nav className="container mx-auto flex items-center justify-between px-6 py-3">
                 {/* 左侧 Logo + 网站名称 */}
                 <div className="flex items-center space-x-3 cursor-pointer" onClick={() => routeJump('')}>
-                    {/* Logo 预留 */}
                     <div className="w-25 h-5 bg-transparent rounded-md flex items-center justify-center">
                         <img src="src/assets/logo/logo.png" alt="logo" />
                     </div>
-                    {/* 网站名称 */}
                     <h1 className="text-2xl font-bold text-gray-800 tracking-wide">
                         Pandora · TravelNow
                     </h1>
@@ -71,15 +79,12 @@ const Navbar: React.FC = () => {
                 <ul className="hidden md:flex space-x-8 text-gray-700 font-medium">
                     {nav_menu.map((item, index) => {
                         const isActive = location.pathname === `/${item.name}` || (item.name === "" && location.pathname === "/");
-
                         return (
                         <li className={`hover:text-cyan-400 cursor-pointer transition-colors ${
                             isActive ? "text-cyan-400 border-b-3 border-cyan-400 pb-2" : ""
                         }`}
                             key={index}
-                            onClick={() => {
-                                routeJump(item.name);
-                            }}
+                            onClick={() => { routeJump(item.name); }}
                         >
                             {item.title}
                         </li>
@@ -88,34 +93,33 @@ const Navbar: React.FC = () => {
 
                 {/* 右侧用户信息/登录注册 */}
                 <div className="flex items-center space-x-4">
-
-                    {/* 已登录示例 */}
-                    {token ? (<div className="hidden md:flex items-center space-x-2">
-                        <img src="/diary/hotest.jpeg" alt="" className={classNames('rounded-full'
-                            , 'w-10', 'h-10', 'cursor-pointer'
-                        ) }/>
-                        <Popover trigger='hover' content={content}>
-                            <span className="text-gray-800 font-medium">旅行者 · {username}</span>
-                        </Popover>
-                    </div>) : (
+                    {token ? (
+                        <div className="hidden md:flex items-center space-x-2">
+                            <Popover trigger="hover" content={popoverContent} placement="bottomRight">
+                                <img
+                                    src={avatar}
+                                    alt="avatar"
+                                    className="rounded-full w-10 h-10 cursor-pointer border-2 border-gray-200 hover:border-blue-400 transition-colors object-cover"
+                                />
+                            </Popover>
+                            <Popover trigger="hover" content={popoverContent} placement="bottomRight">
+                                <span className="text-gray-800 font-medium cursor-pointer hover:text-blue-600 transition-colors">
+                                    {roleTag[role]} · {username}
+                                </span>
+                            </Popover>
+                        </div>
+                    ) : (
                         <div className="hidden md:flex space-x-3">
                             <button className="px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
-                                    onClick={() => {
-                                        routeJump('signin')
-                                    }}
-                            >
+                                    onClick={() => { routeJump('signin'); }}>
                                 登录
                             </button>
                             <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                                    onClick={() => {
-                                        routeJump('signup')
-                                    }}
-                            >
+                                    onClick={() => { routeJump('signup'); }}>
                                 注册
                             </button>
                         </div>
                     )}
-
                 </div>
             </nav>
         </header>

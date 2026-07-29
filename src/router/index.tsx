@@ -8,11 +8,14 @@ const DestinationDetail = lazy(() => import('../views/destination/Detail.tsx'))
 const Home = lazy(() => import('../views/home/Index.tsx'))
 const Hotel = lazy(() => import('../views/hotel/Index.tsx'))
 const HotelDetail = lazy(() => import('../views/hotel/Detail.tsx'))
+const Flight = lazy(() => import('../views/flight/Index.tsx'))
 const Strategy = lazy(() => import('../views/strategy/Index.tsx'))
 const StrategyDetail = lazy(() => import('../views/strategy/Detail.tsx'))
 const SignUp = lazy(() => import('../views/register/UserSignUp.tsx'))
 const SignIn = lazy(() => import('../views/register/UserSignIn.tsx'))
 const Diary = lazy(() => import('../views/diary/Index.tsx'))
+const UserProfile = lazy(() => import('../views/user/Profile.tsx'))
+const CreatorCenter = lazy(() => import('../views/user/CreatorCenter.tsx'))
 
 
 
@@ -57,6 +60,14 @@ const router = createBrowserRouter([
                 )
             },
             {
+                path: '/flight',
+                element: (
+                    <Suspense fallback={<Loading></Loading>}>
+                        <Flight></Flight>
+                    </Suspense>
+                )
+            },
+            {
                 path: '/hotel/:id',
                 element: (
                     <Suspense fallback={<Loading></Loading>}>
@@ -77,6 +88,22 @@ const router = createBrowserRouter([
                 element: (
                     <Suspense fallback={<Loading></Loading>}>
                         <StrategyDetail></StrategyDetail>
+                    </Suspense>
+                )
+            },
+            {
+                path: '/user/profile',
+                element: (
+                    <Suspense fallback={<Loading></Loading>}>
+                        <UserProfile></UserProfile>
+                    </Suspense>
+                )
+            },
+            {
+                path: '/user/creator',
+                element: (
+                    <Suspense fallback={<Loading></Loading>}>
+                        <CreatorCenter></CreatorCenter>
                     </Suspense>
                 )
             },
